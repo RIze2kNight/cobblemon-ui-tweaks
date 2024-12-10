@@ -1,7 +1,7 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.9-SNAPSHOT'
 	id 'maven-publish'
-	id "org.jetbrains.kotlin.jvm" version "2.0.0"
+	id "org.jetbrains.kotlin.jvm" version "2.1.0"
 }
 
 version = project.mod_version
@@ -40,8 +40,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
-	modImplementation("dev.architectury:architectury-fabric:9.1.12")
-	modImplementation("com.cobblemon:fabric:1.5.0+1.20.1-SNAPSHOT")
+	modImplementation("dev.architectury:architectury-fabric:13.0.8")
+	modImplementation("com.cobblemon:fabric:1.6.0+1.21.1-SNAPSHOT")
 }
 
 processResources {
@@ -53,12 +53,12 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 21
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 	kotlinOptions {
-		jvmTarget = 17
+		jvmTarget = 21
 	}
 }
 
@@ -68,8 +68,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {

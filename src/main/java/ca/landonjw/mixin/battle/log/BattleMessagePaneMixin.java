@@ -35,15 +35,14 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
     @Shadow(remap = false) @Final public static int TEXT_BOX_HEIGHT;
     @Shadow(remap = false) protected abstract void correctSize();
     @Shadow(remap = false) private float opacity;
-    @Shadow(remap = false) public abstract double getScrollAmount();
     @Shadow(remap = false) protected abstract int addEntry(@NotNull BattleMessagePane.BattleMessageLine entry);
     @Shadow(remap = false) protected abstract void updateScrollingState(double mouseX, double mouseY);
     @Shadow(remap = false) private boolean scrolling;
 
     @Unique private final List<Component> battleMessages = new ArrayList<>();
 
-    public BattleMessagePaneMixin(Minecraft minecraft, int i, int j, int k, int l, int m) {
-        super(minecraft, i, j, k, l, m);
+    public BattleMessagePaneMixin(Minecraft minecraft, int i, int j, int k, int l) {
+        super(minecraft, i, j, k, l);
     }
 
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/cobblemon/mod/common/client/battle/ClientBattleMessageQueue;subscribe(Lkotlin/jvm/functions/Function1;)V"), remap = false)
@@ -64,8 +63,7 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
      */
     @Inject(method = "correctSize", at = @At("HEAD"), remap = false, cancellable = true)
     private void cobblemon_ui_tweaks$correctSize(CallbackInfo ci) {
-        updateSize(getWidthOverride(), getHeightOverride(), (int)Math.round(getY() + 6), (int)Math.round(getY() + 6 + getHeightOverride()));
-        setLeftPos((int)Math.round(getX()));
+        setRectangle(getWidthOverride() + 6, getHeightOverride(), (int)getBattleLogX(), (int)getBattleLogY() + 6);
         ci.cancel();
     }
 
@@ -136,22 +134,22 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
     }
 
     @Unique
-    private double getX() {
+    private double getBattleLogX() {
         return GUIHandler.INSTANCE.getBattleLogX();
     }
 
     @Unique
-    private void setX(double value) {
+    private void setBattleLogX(double value) {
         GUIHandler.INSTANCE.setBattleLogX(value);
     }
 
     @Unique
-    private double getY() {
+    private double getBattleLogY() {
         return GUIHandler.INSTANCE.getBattleLogY();
     }
 
     @Unique
-    private void setY(double value) {
+    private void setBattleLogY(double value) {
         GUIHandler.INSTANCE.setBattleLogY(value);
     }
 
@@ -168,10 +166,10 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
 
     @Unique
     private boolean tryMove(double mouseX, double mouseY, double deltaX, double deltaY) {
-        if (mouseY - deltaY < y0 - 20 || mouseY - deltaY > y0 + 20) return false;
-        if (mouseX - deltaX < this.x0 - 10 || mouseX - deltaX > this.x1 + 10) return false;
-        setX(getX() + deltaX);
-        setY(getY() + deltaY);
+        if (mouseY - deltaY < getY() - 5 || mouseY - deltaY > getY() + 5) return false;
+        if (mouseX - deltaX < getX() - 5 || mouseX - deltaX > (getX() + getWidth()) + 5) return false;
+        setBattleLogX(getBattleLogX() + deltaX);
+        setBattleLogY(getBattleLogY() + deltaY);
         return true;
     }
 
@@ -182,10 +180,10 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
         var expandButtonX2 = getFrameWidth() - 4;
         var expandButtonY1 = getFrameHeight() - 9;
         var expandButtonY2 = getFrameHeight() - 4;
-        if (mouseX - deltaX < this.x0 + expandButtonX1 - 10 || mouseX - deltaX > this.x0 + expandButtonX2 + 10) return false;
-        if (mouseY - deltaY < this.y0 + expandButtonY1 - 10 || mouseY - deltaY > this.y0 + expandButtonY2 + 10) return false;
-        var newHeight = Math.max(mouseY - this.y0, TEXT_BOX_HEIGHT);
-        var newWidth = Math.max(mouseX - this.x0, TEXT_BOX_WIDTH);
+        if (mouseX - deltaX < getX() + expandButtonX1 - 10 || mouseX - deltaX > getX() + expandButtonX2 + 10) return false;
+        if (mouseY - deltaY < getY() + expandButtonY1 - 10 || mouseY - deltaY > getY() + expandButtonY2 + 10) return false;
+        var newHeight = Math.max(mouseY - getY(), TEXT_BOX_HEIGHT);
+        var newWidth = Math.max(mouseX - getX(), TEXT_BOX_WIDTH);
         setHeightOverride((int)newHeight);
         setWidthOverride((int)newWidth - 12);
         correctSize();
@@ -193,7 +191,7 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
         return true;
     }
 
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "renderWidget", at = @At("HEAD"), cancellable = true)
     private void cobblemon_ui_tweaks$render(GuiGraphics context, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         correctSize();
 
@@ -202,15 +200,15 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
             setScrollAmount(getMaxScroll());
         }
 
-        BattleLogRenderer.INSTANCE.render(context, (int)Math.round(getX()), (int)Math.round(getY()), getFrameHeight(), getFrameWidth(), opacity);
+        BattleLogRenderer.INSTANCE.render(context, (int)Math.round(getBattleLogX()), (int)Math.round(getBattleLogY()), getFrameHeight(), getFrameWidth(), opacity);
 
         context.enableScissor(
-                x0 + 5,
-                (int)Math.round(getY() + 6),
-                x0 + 5 + getWidthOverride(),
-                (int)Math.round(getY() + 6 + getHeightOverride())
+                getX() + 5,
+                (int)Math.round(getBattleLogY() + 6),
+                getX() + 5 + getWidthOverride(),
+                (int)Math.round(getBattleLogY() + 6 + getHeightOverride())
         );
-        super.render(context, mouseX, mouseY, partialTicks);
+        super.renderWidget(context, mouseX, mouseY, partialTicks);
         context.disableScissor();
         ci.cancel();
     }
@@ -222,12 +220,12 @@ public abstract class BattleMessagePaneMixin extends AbstractSelectionList {
 
     @Override
     public int getRowLeft() {
-        return x0 + 40;
+        return getX() + 10;
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return this.x0 + getWidthOverride();
+        return getX() + getWidthOverride();
     }
 
 }

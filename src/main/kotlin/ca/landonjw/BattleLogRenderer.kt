@@ -6,15 +6,15 @@ import net.minecraft.resources.ResourceLocation
 
 object BattleLogRenderer {
 
-    val top = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/top.png")
-    val bottom = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/bottom.png")
-    val left = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/left.png")
-    val right = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/right.png")
-    val topLeft = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/top_left.png")
-    val topRight = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/top_right.png")
-    val bottomLeft = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/bottom_left.png")
-    val bottomRight = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/bottom_right.png")
-    val center = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/log/center.png")
+    val top = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/top.png")
+    val bottom = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/bottom.png")
+    val left = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/left.png")
+    val right = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/right.png")
+    val topLeft = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/top_left.png")
+    val topRight = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/top_right.png")
+    val bottomLeft = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/bottom_left.png")
+    val bottomRight = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/bottom_right.png")
+    val center = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/log/center.png")
 
     fun render(context: GuiGraphics, x: Int, y: Int, height: Int, width: Int, opacity: Float) {
         blitk(

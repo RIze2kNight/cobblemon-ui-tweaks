@@ -2,7 +2,6 @@ package ca.landonjw.mixin.battle.move;
 
 import ca.landonjw.MoveHoverRenderer;
 import com.cobblemon.mod.common.client.gui.battle.subscreen.BattleMoveSelection;
-import com.cobblemon.mod.common.pokemon.Pokemon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.Mixin;

@@ -35,17 +35,17 @@ public abstract class PCGUIMixin extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount, double verticalAmount) {
         var pastureWidget = storageWidget.getPastureWidget();
         if (pastureWidget != null && pastureWidget.getPastureScrollList().isMouseOver(mouseX, mouseY)) {
-            pastureWidget.getPastureScrollList().mouseScrolled(mouseX, mouseY, amount);
+            pastureWidget.getPastureScrollList().mouseScrolled(mouseX, mouseY, amount, verticalAmount);
         }
         else {
             var newBox = (storageWidget.getBox() - (int)amount) % this.pc.getBoxes().size();
             storageWidget.setBox(newBox);
         }
 
-        return super.mouseScrolled(mouseX, mouseY, amount);
+        return super.mouseScrolled(mouseX, mouseY, amount, verticalAmount);
     }
 
     @Inject(method = "closeNormally", at = @At("TAIL"), remap = false)

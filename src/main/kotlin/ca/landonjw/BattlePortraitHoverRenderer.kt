@@ -1,5 +1,6 @@
 package ca.landonjw
 
+import ca.landonjw.util.ReflectionUtils
 import com.cobblemon.mod.common.api.battles.model.actor.ActorType
 import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.text.font
@@ -24,11 +25,11 @@ import kotlin.math.max
 
 object BattlePortraitHoverRenderer {
 
-    val left = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/left.png")
-    val flippedLeft = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/flipped/left.png")
-    val middle = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/middle.png")
-    val right = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/right.png")
-    val flippedRight = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/flipped/right.png")
+    val left = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/left.png")
+    val flippedLeft = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/flipped/left.png")
+    val middle = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/middle.png")
+    val right = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/right.png")
+    val flippedRight = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/flipped/right.png")
 
     fun render(context: GuiGraphics, mouseX: Int, mouseY: Int) {
         val battle = battle ?: return
@@ -62,7 +63,11 @@ object BattlePortraitHoverRenderer {
         if (mouseX < x0 || mouseX > x1) return
         if (mouseY < y0 || mouseY > y1) return
 
-        val aspects = activeBattlePokemon.battlePokemon?.aspects
+
+        val battlePokemon = activeBattlePokemon.battlePokemon ?: return
+
+        val aspects: Set<String>? = ReflectionUtils.getPrivateField(battlePokemon, "aspects")
+
         val species = activeBattlePokemon.battlePokemon?.species ?: return
         val form = activeBattlePokemon.battlePokemon?.species?.getForm(aspects ?: setOf()) ?: return
 

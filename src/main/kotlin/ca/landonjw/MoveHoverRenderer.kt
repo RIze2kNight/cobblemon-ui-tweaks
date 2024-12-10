@@ -1,5 +1,6 @@
 package ca.landonjw
 
+import ca.landonjw.util.ReflectionUtils
 import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.moves.MoveTemplate
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories
@@ -17,15 +18,15 @@ import net.minecraft.resources.ResourceLocation
 
 object MoveHoverRenderer {
 
-    val headerLeft = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/header/left.png")
-    val headerMiddle = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/header/middle.png")
-    val headerRight = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/header/right.png")
-    val bodyLeftBorder = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/body/left_border.png")
-    val bodyLeftCorner = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/body/left_corner.png")
-    val bodyBottomBorder = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/body/bottom_border.png")
-    val bodyRightCorner = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/body/right_corner.png")
-    val bodyRightBorder = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/body/right_border.png")
-    val bodyMiddle = ResourceLocation(CobblemonUITweaks.MODID, "textures/battle/move/body/middle.png")
+    val headerLeft = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/header/left.png")
+    val headerMiddle = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/header/middle.png")
+    val headerRight = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/header/right.png")
+    val bodyLeftBorder = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/left_border.png")
+    val bodyLeftCorner = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/left_corner.png")
+    val bodyBottomBorder = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/bottom_border.png")
+    val bodyRightCorner = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/right_corner.png")
+    val bodyRightBorder = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/right_border.png")
+    val bodyMiddle = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/middle.png")
 
     fun render(context: GuiGraphics, x: Float, y: Float, move: MoveTemplate) {
         val bodyWidth = 150
@@ -208,7 +209,10 @@ object MoveHoverRenderer {
     private fun getMoveEffectiveness(move: MoveTemplate): MutableComponent? {
         val battle = CobblemonClient.battle ?: return null
         val opponent = battle.side2.activeClientBattlePokemon.firstOrNull()?.battlePokemon ?: return null
-        val opponentForm = opponent.species.getForm(opponent.aspects)
+
+        val aspects: Set<String> = ReflectionUtils.getPrivateField(opponent, "aspects") ?: return null
+
+        val opponentForm = opponent.species.getForm(aspects)
         if (move.damageCategory == DamageCategories.STATUS) return null
         return MoveEffectivenessCalculator.getMoveEffectiveness(move.elementalType, opponentForm.primaryType, opponentForm.secondaryType)
     }
