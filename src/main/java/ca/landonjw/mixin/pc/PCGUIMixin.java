@@ -4,9 +4,11 @@ import ca.landonjw.GUIHandler;
 import ca.landonjw.HAHighlighterRenderer;
 import ca.landonjw.JumpPCBoxWidget;
 import com.cobblemon.mod.common.client.gui.pc.PCGUI;
+import com.cobblemon.mod.common.client.gui.pc.PCGUIConfiguration;
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget;
 import com.cobblemon.mod.common.client.keybind.CobblemonKeyBinds;
 import com.cobblemon.mod.common.client.storage.ClientPC;
+import com.cobblemon.mod.common.client.storage.ClientParty;
 import com.cobblemon.mod.common.mixin.accessor.KeyBindingAccessor;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import net.minecraft.ChatFormatting;
@@ -14,6 +16,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,13 +32,14 @@ import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 
 @Mixin(PCGUI.class)
 public abstract class PCGUIMixin extends Screen {
-
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Final @Shadow(remap = false) private ClientPC pc;
+    @Shadow(remap = false) private int openOnBox;
 
     @Unique private JumpPCBoxWidget jumpPCBoxWidget;
     @Shadow(remap = false) private Pokemon previewPokemon = null;
 
+    private Logger LOGGER = LoggerFactory.getLogger("cobblemon-ui-tweaks");
     protected PCGUIMixin(Component component) {
         super(component);
     }
@@ -80,6 +85,7 @@ public abstract class PCGUIMixin extends Screen {
     //Renders the PC Box Jump widget
     @Inject(method = "init", at = @At(value = "TAIL"))
     private void cobblemon_ui_tweaks$init(CallbackInfo ci) {
+        this.storageWidget.setBox(GUIHandler.INSTANCE.getLastPCBox());
 
         var PCBox = storageWidget.getBox() + 1;
 
@@ -92,7 +98,6 @@ public abstract class PCGUIMixin extends Screen {
                 PC_SPACER_HEIGHT,
                 Component.translatable("cobblemon.ui.pc.box.title", Component.literal(String.valueOf(PCBox)).withStyle(ChatFormatting.BOLD))
         );
-
         this.addRenderableWidget(jumpPCBoxWidget);
     }
 
@@ -112,7 +117,6 @@ public abstract class PCGUIMixin extends Screen {
         return originalText;
     }
 
-    //Stop render original PC Box Title and replace with JumpPCBox/rest of code init
     @Inject(
             method = "render",
             at = @At(value = "TAIL")

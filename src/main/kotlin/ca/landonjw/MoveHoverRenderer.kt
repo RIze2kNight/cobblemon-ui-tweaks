@@ -33,7 +33,7 @@ object MoveHoverRenderer {
     val bodyRightBorder = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/right_border.png")
     val bodyMiddle = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/body/middle.png")
 
-    fun render(context: GuiGraphics, x: Float, y: Float, move: MoveTemplate, typeChanges: Map<String,String>) {
+    fun render(context: GuiGraphics, x: Float, y: Float, move: MoveTemplate) {
         val bodyWidth = 150
         val opacity = 0.95
 
@@ -55,7 +55,7 @@ object MoveHoverRenderer {
         val descriptionLines = Minecraft.getInstance().font.splitter.splitLines(moveDescription, 150, moveDescription.style)
         val orderedLines = Language.getInstance().getVisualOrder(descriptionLines)
 
-        val effectivenessText = getMoveEffectiveness(move, typeChanges)
+        val effectivenessText = getMoveEffectiveness(move)
 
         val bodyHeight = (orderedLines.size * 8) + 8 + if (effectivenessText != null) 8 else 0
 
@@ -211,7 +211,7 @@ object MoveHoverRenderer {
         }
     }
 
-    private fun getMoveEffectiveness(move: MoveTemplate, typeChanges: Map<String, String>): MutableComponent? {
+    private fun getMoveEffectiveness(move: MoveTemplate): MutableComponent? {
         val battle = CobblemonClient.battle ?: return null
         val opponent = battle.side2.activeClientBattlePokemon.firstOrNull()?.battlePokemon ?: return null
         val aspects: Set<String> = ReflectionUtils.getPrivateField(opponent, "aspects") ?: return null
@@ -219,45 +219,9 @@ object MoveHoverRenderer {
         val opponentForm = opponent.species.getForm(aspects)
         if (move.damageCategory == DamageCategories.STATUS) return null
 
-        val typeChangeList = getTypeChanges(battle,typeChanges)
         var primaryType: ElementalType? = opponentForm.primaryType
         var secondaryType: ElementalType? = opponentForm.secondaryType
 
-        if (typeChangeList.isNotEmpty()) {
-            primaryType = typeChangeList.getOrNull(0) ?: primaryType // Use the first element if available, otherwise keep the original type
-            secondaryType = typeChangeList.getOrNull(1) ?: secondaryType // Use the second element if available, otherwise keep the original type
-        }
-
         return MoveEffectivenessCalculator.getMoveEffectiveness(move.elementalType, primaryType!!, secondaryType)
-    }
-
-    private fun getTypeChanges(battle: ClientBattle, typeChanges: Map<String, String>): List<ElementalType?>{
-        val typeChangeList = mutableListOf<ElementalType?>()
-        val ownerName = when (val owner = battle.side2.actors[0].displayName.contents){
-            is TranslatableContents -> I18n.get(owner.key)
-            is PlainTextContents -> I18n.get(owner.text())
-            else -> owner.toString()
-        }
-        val opponentName = when (val opponent = battle.side2.activeClientBattlePokemon.firstOrNull()?.battlePokemon?.displayName?.contents){
-            is TranslatableContents -> I18n.get(opponent.key)
-            is PlainTextContents -> I18n.get(opponent.text())
-            else -> opponent.toString()
-        }
-
-        var currentType: List<String> = emptyList()
-        if(battle.side2.actors[0].type.name == "WILD"){
-            if(typeChanges["WILD:$opponentName"] != null){
-                currentType = typeChanges["WILD:$opponentName"]!!.split("/")
-            }
-        }
-        else if(typeChanges["$ownerName:$opponentName"] != null){
-            currentType = typeChanges["$ownerName:$opponentName"]!!.split("/")
-        }
-
-        for(element in currentType){
-            typeChangeList.add(ElementalTypes.get(element))
-        }
-
-        return typeChangeList
     }
 }

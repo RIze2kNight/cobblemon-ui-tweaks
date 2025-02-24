@@ -29,11 +29,6 @@ public abstract class StorageWidgetMixin {
     @Shadow(remap = false) public abstract void setBox(int value);
     @Final @Shadow(remap = false) private ClientPC pc;
 
-    @Inject(method = "<init>", at = @At("TAIL"), remap = false)
-    private void cobblemon_ui_tweaks$init(CallbackInfo ci) {
-        setBox(GUIHandler.INSTANCE.getLastPCBox());
-    }
-
     @Inject(method = "renderWidget", at = @At("TAIL"))
     public void cobblemon_ui_tweaks$renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         GUIHandler.INSTANCE.setHoveredPokemon(null);
@@ -66,7 +61,7 @@ public abstract class StorageWidgetMixin {
 
     @Inject(method = "setBox", at = @At("TAIL"), remap = false)
     public void cobblemon_ui_tweaks$setBox(int value, CallbackInfo ci) {
-        GUIHandler.INSTANCE.setLastPCBox(value);
+        if (value != 0){ GUIHandler.INSTANCE.setLastPCBox(value); }
     }
 
 }
