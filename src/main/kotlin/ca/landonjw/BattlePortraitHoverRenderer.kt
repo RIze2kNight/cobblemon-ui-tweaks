@@ -4,13 +4,10 @@ import ca.landonjw.util.ReflectionUtils
 import com.cobblemon.mod.common.api.battles.model.actor.ActorType
 import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.text.font
-import com.cobblemon.mod.common.battles.ai.TypeEffectivenessMap
-import com.cobblemon.mod.common.battles.ai.getDamageMultiplier
 import com.cobblemon.mod.common.client.CobblemonClient.battle
 import com.cobblemon.mod.common.client.CobblemonResources
 import com.cobblemon.mod.common.client.battle.ActiveClientBattlePokemon
 import com.cobblemon.mod.common.client.gui.TypeIcon
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_PORTRAIT_DIAMETER
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_PORTRAIT_OFFSET_X
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_PORTRAIT_OFFSET_Y
@@ -61,7 +58,7 @@ object BattlePortraitHoverRenderer {
         // Prevent render if pokemon is currently being swapped out
         if (activeBattlePokemon.animations.peek() !== null) return
         val playerNumberOffset = (activeBattlePokemon.getActorShowdownId()[1].digitToInt() - 1) / 2 * 10
-        val isCompact = battle?.battleFormat?.battleType?.pokemonPerSide!! > 1;
+        val isCompact = battle?.battleFormat?.battleType?.pokemonPerSide!! > 1
 
         val titleWidth = if(isCompact) COMPACT_TILE_WIDTH else TILE_WIDTH
         val verticalSpacing = if(isCompact) COMPACT_VERTICAL_SPACING else VERTICAL_SPACING

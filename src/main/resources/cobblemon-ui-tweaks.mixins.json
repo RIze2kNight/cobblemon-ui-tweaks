@@ -12,8 +12,7 @@
 		"pc.PCGUIMixin",
 		"pc.StatWidgetMixin",
 		"pc.StorageWidgetMixin",
-		"pc.SummaryMixin",
-		"pc.InfoWidgetMixin"
+		"pc.SummaryMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -6,19 +6,14 @@ import com.cobblemon.mod.common.api.moves.MoveTemplate
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories
 import com.cobblemon.mod.common.api.text.font
 import com.cobblemon.mod.common.api.types.ElementalType
-import com.cobblemon.mod.common.api.types.ElementalTypes
 import com.cobblemon.mod.common.client.CobblemonClient
 import com.cobblemon.mod.common.client.CobblemonResources
-import com.cobblemon.mod.common.client.battle.ClientBattle
 import com.cobblemon.mod.common.client.render.drawScaledText
 import com.cobblemon.mod.common.util.asTranslated
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.resources.language.I18n
 import net.minecraft.locale.Language
 import net.minecraft.network.chat.MutableComponent
-import net.minecraft.network.chat.contents.PlainTextContents
-import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
 
 object MoveHoverRenderer {
@@ -219,9 +214,9 @@ object MoveHoverRenderer {
         val opponentForm = opponent.species.getForm(aspects)
         if (move.damageCategory == DamageCategories.STATUS) return null
 
-        var primaryType: ElementalType? = opponentForm.primaryType
-        var secondaryType: ElementalType? = opponentForm.secondaryType
+        val primaryType: ElementalType = opponentForm.primaryType
+        val secondaryType: ElementalType? = opponentForm.secondaryType
 
-        return MoveEffectivenessCalculator.getMoveEffectiveness(move.elementalType, primaryType!!, secondaryType)
+        return MoveEffectivenessCalculator.getMoveEffectiveness(move.elementalType, primaryType, secondaryType)
     }
 }

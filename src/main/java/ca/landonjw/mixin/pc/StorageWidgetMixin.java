@@ -61,7 +61,7 @@ public abstract class StorageWidgetMixin {
 
     @Inject(method = "setBox", at = @At("TAIL"), remap = false)
     public void cobblemon_ui_tweaks$setBox(int value, CallbackInfo ci) {
-        if (value != 0){ GUIHandler.INSTANCE.setLastPCBox(value); }
+        GUIHandler.INSTANCE.setLastPCBox(value);
     }
 
 }
